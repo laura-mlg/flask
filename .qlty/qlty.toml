@@ -1,0 +1,90 @@
+# This configuration was generated with the setup-qlty-toml skill.
+# For reference: https://docs.qlty.sh/qlty-toml
+config_version = "0"
+
+exclude_patterns = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/build/**",
+  "docs/_build/**",
+  "**/__pycache__/**",
+  "**/*.pyc",
+]
+
+test_patterns = [
+  "**/tests/**",
+  "**/test_*.py",
+  "**/*_test.py",
+]
+
+[smells]
+mode = "comment"
+
+# Required — points to the built-in Qlty plugin registry.
+[[source]]
+name = "default"
+default = true
+
+# Python linting + formatting (replaces flake8+black+isort)
+[[plugin]]
+name = "ruff"
+enabled = true
+config_files = ["pyproject.toml"]
+
+# Python type checking
+[[plugin]]
+name = "mypy"
+enabled = true
+config_files = ["pyproject.toml"]
+
+# Python security scanner
+[[plugin]]
+name = "bandit"
+enabled = true
+mode = "block"
+
+# Secrets detection
+[[plugin]]
+name = "trufflehog"
+enabled = true
+mode = "block"
+
+# Multi-language semantic scanner (custom Flask security rules)
+[[plugin]]
+name = "semgrep"
+enabled = true
+mode = "block"
+config_files = [".semgrep.yaml"]
+
+# Dependency vulnerability scanning (uv.lock / pyproject.toml)
+[[plugin]]
+name = "osv-scanner"
+enabled = true
+mode = "block"
+
+# Markdown linting
+[[plugin]]
+name = "markdownlint"
+enabled = true
+
+# YAML linting
+[[plugin]]
+name = "yamllint"
+enabled = true
+
+# GitHub Actions workflow linting
+[[plugin]]
+name = "actionlint"
+enabled = true
+
+# GitHub Actions security scanner (team already uses it via .github/workflows/zizmor.yaml)
+[[plugin]]
+name = "zizmor"
+enabled = true
+mode = "block"
+
+# Suppress B104 (hardcoded binding to all interfaces) — known false-positive noise in web frameworks
+[[triage]]
+plugins = ["bandit"]
+rules = ["B104"]
+set.mode = "monitor"

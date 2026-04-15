@@ -1,0 +1,32 @@
+rules:
+  - id: flask-debug-true
+    patterns:
+      - pattern: $APP.run(..., debug=True, ...)
+      - pattern: $APP.run(debug=True)
+    message: Flask app running with debug=True — disable before deploying to production
+    languages: [python]
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: CWE-94
+
+  - id: flask-secret-key-hardcoded
+    patterns:
+      - pattern: |
+          $APP.secret_key = "..."
+      - pattern: |
+          $APP.config["SECRET_KEY"] = "..."
+    message: Hardcoded Flask secret key — use environment variable instead
+    languages: [python]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: CWE-798
+
+  - id: flask-response-no-content-type
+    pattern: flask.Response($DATA)
+    message: Flask Response created without explicit Content-Type header
+    languages: [python]
+    severity: WARNING
+    metadata:
+      category: security
